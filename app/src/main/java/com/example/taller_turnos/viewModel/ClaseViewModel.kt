@@ -1,70 +1,30 @@
 package com.example.taller_turnos.viewModel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.taller_turnos.model.Clase
+import com.example.taller_turnos.repository.ClaseRepository
 
-class ClaseViewModel : ViewModel() {
+class ClaseViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repository = ClaseRepository.getInstance(application)
 
     private val _clases = MutableLiveData<List<Clase>>()
     val clases: LiveData<List<Clase>> = _clases
 
     init {
-        _clases.value = listOf(
-            Clase(1, "Crochet inicial","Pimpinela", 6, 4),
-            Clase(2, "Crochet inicial", "Pimpinela", 6, 3)
-        )
+        cargarClases()
     }
 
-    fun agregarClase(clase : Clase) {
-        val listaActual = _clases.value?.toMutableList() ?: mutableListOf()
-        listaActual.add(clase)
-        _clases.value = listaActual
+    fun cargarClases() {
+        _clases.value = repository.obtenerClases()
     }
 
-    fun eliminarClase(clase: Clase) {
-        val listaActual = _clases.value?.toMutableList() ?: return
-        listaActual.remove(clase)
-        _clases.value = listaActual
-    }
-
-    fun anotarse(claseId: Int) {
-        val lista = _clases.value?.toMutableList() ?: return
-
-        val index = lista.indexOfFirst { it.id == claseId }
-        if (index != -1) {
-            val clase = lista[index]
-            if (clase.inscriptos < clase.cupoMaximo) {
-                lista[index] = clase.copy(
-                    inscriptos = clase.inscriptos + 1
-                )
-                _clases.value = lista
-            }
-        }
-    }
-
-    fun toggleInscpricion(claseId : Int) {
-        val lista = _clases.value?.toMutableList() ?: return
-
-        val index = lista.indexOfFirst { it.id == claseId }
-        if (index == -1 ) return
-
-        val clase = lista[index]
-
-        if (!clase.estoyInscrpito && clase.inscriptos < clase.cupoMaximo) {
-            lista[index] = clase.copy(
-                clase.inscriptos + 1,
-                estoyInscrpito = true
-            )
-        } else if (clase.estoyInscrpito) {
-            lista[index] =  clase.copy(
-                inscriptos = clase.inscriptos -1,
-                estoyInscrpito = false
-            )
-        }
-
-        _clases.value = lista
+    fun toggleAnotado(clase: Clase) {
+        repository.toggleAnotado(clase)
+        cargarClases()
     }
 
 }

@@ -6,5 +6,5 @@ data class Clase(
     var nombreMaestra: String,
     var cupoMaximo: Int,
     var inscriptos: Int,
-    var estoyInscrpito: Boolean = false
+    var anotado: Boolean = false
 )

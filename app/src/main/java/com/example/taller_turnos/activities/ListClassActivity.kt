@@ -26,8 +26,8 @@ class ListClassActivity: AppCompatActivity() {
 
         setSupportActionBar(binding.topAppBar)
 
-        adapter = ClaseAdapter(emptyList()) {
-            clase -> irADetalle(clase)
+        adapter = ClaseAdapter(emptyList()) { clase ->
+            irADetalle(clase)
         }
 
         binding.rvClasses.layoutManager = LinearLayoutManager(this)

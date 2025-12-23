@@ -14,6 +14,7 @@ class DetailActivity : AppCompatActivity() {
     private val viewModel: ClaseViewModel by viewModels()
 
     private var claseId: Int = -1
+    private var claseActual: Clase? = null
 
     override fun onCreate(savedInstance: Bundle?) {
         super.onCreate(savedInstance)
@@ -23,12 +24,12 @@ class DetailActivity : AppCompatActivity() {
         setSupportActionBar(binding.topAppBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        claseId = intent.getIntExtra("CLASE_ID", -1)
+        claseId = intent.getIntExtra("Clase_ID", -1)
 
         observarClase()
 
         binding.btnAccion.setOnClickListener {
-            viewModel.toggleInscpricion(claseId)
+            claseActual?.let { viewModel.toggleAnotado(it) }
         }
 
 
@@ -38,6 +39,7 @@ class DetailActivity : AppCompatActivity() {
         viewModel.clases.observe(this) { lista ->
             val clase = lista.find { it.id == claseId }
             clase?.let {
+                claseActual = it
                 mostarClase(it)
             }
         }
@@ -49,7 +51,7 @@ class DetailActivity : AppCompatActivity() {
         binding.tvCupo.text = "Cupo ${clase.inscriptos}/${clase.cupoMaximo}"
 
         when {
-            clase.estoyInscrpito -> {
+            clase.anotado -> {
                 binding.btnAccion.text = "Darme de baja"
                 binding.btnAccion.isEnabled = true
             }
